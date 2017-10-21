@@ -15,8 +15,8 @@ public class Exam {
 	
 	private String title;
 
-	@OneToMany
-	private List<Question> questions;
+//	@OneToMany
+//	private List<Question> questions;
 
 	public String getTitle() {
 		return title;

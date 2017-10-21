@@ -1,4 +1,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@page import="java.util.*,examinator.entity.Exam"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,5 +10,6 @@
 <body>
 	<h2>Hello World, Spring MVC</h2>
 
-	<p>Welcome, ${name}</p>
+	<p>Welcome, ${examId}</p>
+	<a href="exam/${examId}">exam</a>
 </body>
