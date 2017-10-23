@@ -1,22 +1,19 @@
 package examinator.entity;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Exam {
 	@Id
-	@Column(name = "EXAM_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "exam_id")
 	private long id;
-	
-	private String title;
 
-//	@OneToMany
-//	private List<Question> questions;
+	private String title;
 
 	public String getTitle() {
 		return title;

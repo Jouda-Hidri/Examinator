@@ -1,13 +1,13 @@
 package examinator.controller;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import examinator.entity.Exam;
-import examinator.jpa.EntityManagerUtil;
 
 @Controller
 public class ExamController {
@@ -15,22 +15,22 @@ public class ExamController {
 	@GetMapping("/hello")
 	public String hello(Model model) {
 
-		// ------------------------------------------
-		EntityManager entityManager = EntityManagerUtil.getEntityManager();
-		Exam exam = new Exam();
+		// EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		try {
+
 			entityManager.getTransaction().begin();
-			// exam.setStudentName(studentName);
-			exam = entityManager.merge(exam);
+			entityManager.persist(new Exam());
 			entityManager.getTransaction().commit();
+			entityManager.close();
 			System.out.println("_exam_ok_");
+
 		} catch (Exception e) {
-			// entityManager.getTransaction().rollback();
+			entityManager.getTransaction().rollback();
 			e.printStackTrace();
 			System.out.println("_exam_ko_");
 		}
-		// return student;
-		// ------------------------------------------
 
 		model.addAttribute("examId", "1");
 
