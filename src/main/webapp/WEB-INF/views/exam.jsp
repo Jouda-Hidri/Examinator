@@ -8,10 +8,15 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<%
-		Exam exam = (Exam) request.getAttribute("exam");
-	%>
-	<h1>${exam.getTitle()}</h1>
-
+	<h1>List of exams</h1>
+	<hr>
+	<hr>
+	<hr>
+	${test}
+	<ul>
+		<c:forEach items="${listExams}" var="exam">
+			<li>${exam.title}</li>
+		</c:forEach>
+	</ul>
 </body>
 </html>

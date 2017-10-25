@@ -15,6 +15,14 @@ public class Exam {
 
 	private String title;
 
+	public Exam() {
+
+	}
+
+	public Exam(String title) {
+		setTitle(title);
+	}
+
 	public String getTitle() {
 		return title;
 	}

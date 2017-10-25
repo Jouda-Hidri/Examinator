@@ -1,10 +1,13 @@
 package examinator.controller;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import examinator.entity.Exam;
@@ -12,28 +15,24 @@ import examinator.entity.Exam;
 @Controller
 public class ExamController {
 
-	@GetMapping("/hello")
-	public String hello(Model model) {
-
-		// EntityManager entityManager = EntityManagerUtil.getEntityManager();
-
+	@GetMapping("/")
+	public String hello(ModelMap model) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		try {
 
 			entityManager.getTransaction().begin();
-			entityManager.persist(new Exam());
+			@SuppressWarnings("unchecked")
+			List<Exam> listExams = entityManager.createQuery("SELECT e FROM Exam e").getResultList();
+			model.put("listExams", listExams);
 			entityManager.getTransaction().commit();
 			entityManager.close();
-			System.out.println("_exam_ok_");
 
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			entityManager.getTransaction().rollback();
 			e.printStackTrace();
-			System.out.println("_exam_ko_");
 		}
-
-		model.addAttribute("examId", "1");
-
 		return "welcome";
 	}
 
