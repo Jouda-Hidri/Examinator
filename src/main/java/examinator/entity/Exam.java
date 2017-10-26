@@ -13,7 +13,12 @@ public class Exam {
 	@Column(name = "exam_id")
 	private long id;
 
+	public long getId() {
+		return id;
+	}
+
 	private String title;
+//	private String questions;
 
 	public Exam() {
 
@@ -30,5 +35,4 @@ public class Exam {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
 }

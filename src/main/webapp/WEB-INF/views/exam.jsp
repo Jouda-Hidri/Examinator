@@ -8,15 +8,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>List of exams</h1>
+	<h1>${exam.title}</h1>
 	<hr>
-	<hr>
-	<hr>
-	${test}
-	<ul>
-		<c:forEach items="${listExams}" var="exam">
-			<li>${exam.title}</li>
-		</c:forEach>
-	</ul>
+	<p>questions</p>
 </body>
 </html>

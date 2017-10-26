@@ -11,7 +11,7 @@
 	<h1>List of exams</h1>
 	<ul>
 		<c:forEach items="${listExams}" var="exam">
-			<li>${exam.title}</li>
+			<li><a href="exam/${exam.id}">${exam.title}</a></li>
 		</c:forEach>
 	</ul>
 </body>

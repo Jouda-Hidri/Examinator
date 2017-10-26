@@ -6,9 +6,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import examinator.entity.Exam;
 
@@ -27,9 +27,7 @@ public class ExamController {
 			entityManager.getTransaction().commit();
 			entityManager.close();
 
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
 			e.printStackTrace();
 		}
@@ -37,11 +35,16 @@ public class ExamController {
 	}
 
 	@GetMapping("/exam/{id}")
-	public String getExam(Model model) {
-		Exam exam = new Exam();
-		exam.setTitle("example title");
-
-		model.addAttribute("exam", exam);
+	public String getExam(ModelMap model, @PathVariable(value = "id") String id) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		/* TODO get exam by id */
+		entityManager.getTransaction().begin();
+		@SuppressWarnings("unchecked")
+		List<Exam> listExams = entityManager.createQuery("SELECT e FROM Exam e WHERE exam_id=" + id).getResultList();
+		model.put("listExams", listExams);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		model.addAttribute("exam", listExams.get(0));
 
 		return "exam";
 	}
