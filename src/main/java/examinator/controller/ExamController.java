@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import examinator.entity.Exam;
+import examinator.test.TestInsert;
 
 @Controller
 public class ExamController {
@@ -34,6 +35,12 @@ public class ExamController {
 		return "welcome";
 	}
 
+	@GetMapping("/init")
+	public String initExamAndQuestions(ModelMap model) {
+		TestInsert.createOneExamWithfiveQuestions();
+		return "welcome";
+	}
+	
 	@GetMapping("/exam/{id}")
 	public String getExam(ModelMap model, @PathVariable(value = "id") String id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
