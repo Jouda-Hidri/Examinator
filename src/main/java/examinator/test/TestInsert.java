@@ -3,6 +3,7 @@ package examinator.test;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import examinator.entity.Choice;
 import examinator.entity.Exam;
 import examinator.entity.Question;
 
@@ -11,6 +12,12 @@ public class TestInsert {
 
 		Exam exam = new Exam();
 		Question question = new Question();
+		Choice choice1 = new Choice();
+		question.addChoice(choice1);
+		Choice choice2 = new Choice();
+		question.addChoice(choice2);
+		Choice choice3 = new Choice();
+		question.addChoice(choice3);
 		exam.addQuestion(question);
 		Question question2 = new Question();
 		exam.addQuestion(question2);
@@ -21,14 +28,17 @@ public class TestInsert {
 
 		entityManager.getTransaction().begin();
 		entityManager.persist(exam);
+		choice1.setTitle("c1");
+		choice2.setTitle("c2");
+		choice3.setTitle("c3");
 		question.setTitle("q");
 		question2.setTitle("q2");
 		question3.setTitle("q3");
-		exam.setTitle("e");
+		exam.setTitle("e_qc");
 		entityManager.getTransaction().commit();
-		
+
 		exam.addQuestion(question);
-		
+
 	}
 
 }

@@ -10,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import examinator.entity.Choice;
 import examinator.entity.Exam;
 import examinator.entity.Question;
 import examinator.test.TestInsert;
@@ -65,10 +66,14 @@ public class ExamController {
 		@SuppressWarnings("unchecked")
 		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE question_id=" + id)
 				.getResultList();
-		model.put("listQuestions", listQuestions);
+		//--------------------------
+		@SuppressWarnings("unchecked")
+		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE question_id="+id).getResultList();
+		//--------------------------
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		model.addAttribute("question", listQuestions.get(0));
+		model.put("listChoices", listChoices);
 
 		return "question";
 	}
