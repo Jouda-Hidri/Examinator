@@ -14,7 +14,9 @@
 
 	<ul>
 		<c:forEach items="${exam.questions}" var="question">
-			<li>Question : ${question.title}</li>
+			<li><a href="../question/${question.id}">Question :
+					${question.title}</a></li>
+
 		</c:forEach>
 	</ul>
 </body>

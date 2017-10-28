@@ -15,18 +15,23 @@ public class Question {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "question_id")
 	private long id;
-	
+
 	private String title;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="exam_id")
+	@JoinColumn(name = "exam_id")
 	private Exam exam;
-	
-	public Question(){
+
+	public Question() {
 		setTitle("Untitled question");
 	}
-	public Question(String title){
+
+	public Question(String title) {
 		setTitle(title);
+	}
+
+	public long getId() {
+		return id;
 	}
 
 	public Exam getExam() {
@@ -35,9 +40,10 @@ public class Question {
 
 	public void setExam(Exam exam) {
 		this.exam = exam;
-		if (!exam.getQuestions().contains(this)) { // warning this may cause performance issues if you have a large data set since this operation is O(n)
-            exam.getQuestions().add(this);
-        }
+		if (!exam.getQuestions().contains(this)) { // warning this may cause performance issues if you have a large data
+													// set since this operation is O(n)
+			exam.getQuestions().add(this);
+		}
 	}
 
 	public String getTitle() {

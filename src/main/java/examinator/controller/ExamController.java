@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import examinator.entity.Exam;
+import examinator.entity.Question;
 import examinator.test.TestInsert;
 
 @Controller
@@ -40,7 +41,7 @@ public class ExamController {
 		TestInsert.createOneExamWithfiveQuestions();
 		return "welcome";
 	}
-	
+
 	@GetMapping("/exam/{id}")
 	public String getExam(ModelMap model, @PathVariable(value = "id") String id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
@@ -54,6 +55,22 @@ public class ExamController {
 		model.addAttribute("exam", listExams.get(0));
 
 		return "exam";
+	}
+
+	@GetMapping("/question/{id}")
+	public String getQuestion(ModelMap model, @PathVariable(value = "id") String id) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		/* TODO get question by id */
+		entityManager.getTransaction().begin();
+		@SuppressWarnings("unchecked")
+		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE question_id=" + id)
+				.getResultList();
+		model.put("listQuestions", listQuestions);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		model.addAttribute("question", listQuestions.get(0));
+
+		return "question";
 	}
 
 }
