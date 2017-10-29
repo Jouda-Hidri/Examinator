@@ -8,13 +8,24 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>${question.title}</h1>
-	<hr>
-	<form action="../result" method="post">
-		<c:forEach items="${question.choices}" var="choice">
-			<input type="radio" name="choiceId" value="${choice.id}">Choice : ${choice.title}<br>
-		</c:forEach>
-		<input type="submit" value="submit">
-	</form>
+	<c:choose>
+		<c:when test="${question==''}">
+			<p>
+				<a>see result</a>
+			</p>
+			<br />
+		</c:when>
+		<c:otherwise>
+			<h1>${question.title}</h1>
+			<hr>
+			<form action="../next/${question.id}" method="post">
+				<c:forEach items="${question.choices}" var="choice">
+					<input type="radio" name="choiceId" value="${choice.id}">Choice : ${choice.title}<br>
+				</c:forEach>
+				<input type="submit" value="next">
+			</form>
+			<br />
+		</c:otherwise>
+	</c:choose>
 </body>
 </html>

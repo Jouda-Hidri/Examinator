@@ -60,6 +60,7 @@ public class ExamController {
 		return "exam";
 	}
 
+	// TODO to delete after test
 	@GetMapping("/question/{id}")
 	public String getQuestion(ModelMap model, @PathVariable(value = "id") String id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
@@ -79,8 +80,40 @@ public class ExamController {
 		return "question";
 	}
 
-	@PostMapping("/result")
-	public String getResult(ModelMap model, @ModelAttribute("choiceId") String id) {
+	@GetMapping("/first/{id}")
+	public String getFirstQuestion(ModelMap model, @PathVariable(value = "id") String exam_id) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		@SuppressWarnings("unchecked")
+		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE exam_id="+exam_id)
+				.getResultList();
+		
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		model.addAttribute("question", listQuestions.get(0));
+		return "question";
+	}
+
+	@PostMapping("/next/{id}")
+	public String getNextQuestion(ModelMap model, @PathVariable(value = "id") String id) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		@SuppressWarnings("unchecked")
+		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE question_id > "+id)
+				.getResultList();
+		
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		if(listQuestions.isEmpty()) {
+			model.addAttribute("question", "");
+		}else {
+			model.addAttribute("question", listQuestions.get(0));
+		}
+		return "question";
+	}
+	// TODO save the choice here
+	@PostMapping("/choice")
+	public String saveChoice(ModelMap model, @ModelAttribute("choiceId") String id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		/* TODO get choice by id */
 		entityManager.getTransaction().begin();
@@ -97,6 +130,12 @@ public class ExamController {
 		}
 		model.put("title", choice.getTitle());
 		model.put("result", result);
+		return "result";
+	}
+	//TODO show the result here
+	@GetMapping("/result")
+	public String seeResult(ModelMap model, @PathVariable(value = "id") String exam_id) {
+
 		return "result";
 	}
 

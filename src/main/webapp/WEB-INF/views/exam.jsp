@@ -19,5 +19,7 @@
 
 		</c:forEach>
 	</ul>
+	<hr>
+	<p><a href="../first/${exam.id}">start</a><p>
 </body>
 </html>
