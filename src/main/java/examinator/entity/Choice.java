@@ -24,6 +24,10 @@ public class Choice {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "question_id")
 	private Question question;
+	
+	public long getId() {
+		return id;
+	}
 
 	public String getTitle() {
 		return title;

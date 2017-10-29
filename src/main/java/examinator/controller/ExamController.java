@@ -8,7 +8,9 @@ import javax.persistence.Persistence;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import examinator.entity.Choice;
 import examinator.entity.Exam;
@@ -66,10 +68,8 @@ public class ExamController {
 		@SuppressWarnings("unchecked")
 		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE question_id=" + id)
 				.getResultList();
-		//--------------------------
 		@SuppressWarnings("unchecked")
 		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE question_id="+id).getResultList();
-		//--------------------------
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		model.addAttribute("question", listQuestions.get(0));
@@ -77,5 +77,12 @@ public class ExamController {
 
 		return "question";
 	}
+	
+	@PostMapping("/result")
+    public String getResult(ModelMap model, @ModelAttribute("choiceId") String choiceId) {
+		System.out.println("Choice id : "+choiceId);
+		model.put("choiceId", choiceId);
+        return "result";
+    }
 
 }

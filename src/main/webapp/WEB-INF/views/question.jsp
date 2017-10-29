@@ -10,11 +10,11 @@
 <body>
 	<h1>${question.title}</h1>
 	<hr>
-	<ul>
+	<form action="../result" method="post">
 		<c:forEach items="${question.choices}" var="choice">
-			<li>Choice : ${choice.title}</li>
-
+			<input type="radio" name="choiceId" value="${choice.id}">Choice : ${choice.title}<br>
 		</c:forEach>
-	</ul>
+		<input type="submit" value="submit">
+	</form>
 </body>
 </html>
