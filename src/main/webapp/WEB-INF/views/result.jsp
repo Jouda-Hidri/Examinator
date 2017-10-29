@@ -9,7 +9,7 @@
 <body>
 	<h1>Result</h1>
 	<hr>
-	<p>Choice id : ${choiceId}.</p>
+	<p>Choice "${title}" is ${result}</p>
 
 </body>
 </html>

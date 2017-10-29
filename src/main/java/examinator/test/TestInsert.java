@@ -29,8 +29,11 @@ public class TestInsert {
 		entityManager.getTransaction().begin();
 		entityManager.persist(exam);
 		choice1.setTitle("c1");
+		choice1.setCorrect(true);
 		choice2.setTitle("c2");
+		choice2.setCorrect(false);
 		choice3.setTitle("c3");
+		choice3.setCorrect(false);
 		question.setTitle("q");
 		question2.setTitle("q2");
 		question3.setTitle("q3");

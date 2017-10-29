@@ -69,7 +69,8 @@ public class ExamController {
 		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE question_id=" + id)
 				.getResultList();
 		@SuppressWarnings("unchecked")
-		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE question_id="+id).getResultList();
+		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE question_id=" + id)
+				.getResultList();
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		model.addAttribute("question", listQuestions.get(0));
@@ -77,12 +78,26 @@ public class ExamController {
 
 		return "question";
 	}
-	
+
 	@PostMapping("/result")
-    public String getResult(ModelMap model, @ModelAttribute("choiceId") String choiceId) {
-		System.out.println("Choice id : "+choiceId);
-		model.put("choiceId", choiceId);
-        return "result";
-    }
+	public String getResult(ModelMap model, @ModelAttribute("choiceId") String id) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		/* TODO get choice by id */
+		entityManager.getTransaction().begin();
+		@SuppressWarnings("unchecked")
+		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE choice_id=" + id)
+				.getResultList();
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		Choice choice = listChoices.get(0);
+		String result = "wrong";
+		if (choice.isCorrect()) {
+			result = "correct";
+		}
+		model.put("title", choice.getTitle());
+		model.put("result", result);
+		return "result";
+	}
 
 }

@@ -19,6 +19,8 @@ public class Choice {
 	private long id;
 
 	private String title;
+	
+	private boolean correct;
 
 	@ManyToOne
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -49,5 +51,13 @@ public class Choice {
 			// data
 			// set since this operation is O(n)
 		}
+	}
+
+	public boolean isCorrect() {
+		return correct;
+	}
+
+	public void setCorrect(boolean correct) {
+		this.correct = correct;
 	}
 }
