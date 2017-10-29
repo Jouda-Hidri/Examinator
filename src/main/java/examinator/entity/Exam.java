@@ -64,4 +64,10 @@ public class Exam {
             question.setExam(this);
         }
     }
+	
+//	@Override
+//	public String toString() {
+//		return ""+id;
+//	}
+	
 }

@@ -20,8 +20,12 @@ public class TestInsert {
 		question.addChoice(choice3);
 		exam.addQuestion(question);
 		Question question2 = new Question();
+		Choice choice21 = new Choice();
+		question2.addChoice(choice21);
 		exam.addQuestion(question2);
 		Question question3 = new Question();
+		Choice choice31 = new Choice();
+		question3.addChoice(choice31);
 		exam.addQuestion(question3);
 
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();

@@ -1,5 +1,9 @@
 package examinator.entity;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -27,6 +32,10 @@ public class Choice {
 	@JoinColumn(name = "question_id")
 	private Question question;
 	
+	@OneToMany(mappedBy = "choice", cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Collection<Answer> answers = new LinkedHashSet<Answer>();
+
 	public long getId() {
 		return id;
 	}
@@ -60,4 +69,22 @@ public class Choice {
 	public void setCorrect(boolean correct) {
 		this.correct = correct;
 	}
+
+	public Collection<Answer> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(Collection<Answer> answers) {
+		this.answers = answers;
+	}
+	
+	public void addAnswer(Answer answer) {
+		if(answers == null) {
+			answers = new LinkedHashSet<Answer>();
+		}
+        this.answers.add(answer);
+        if (answer.getChoice() != this) {
+            answer.setChoice(this);
+        }
+    }
 }

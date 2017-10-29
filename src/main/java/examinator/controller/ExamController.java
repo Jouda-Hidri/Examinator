@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import examinator.entity.Answer;
 import examinator.entity.Choice;
 import examinator.entity.Exam;
 import examinator.entity.Question;
@@ -85,35 +86,48 @@ public class ExamController {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 		@SuppressWarnings("unchecked")
-		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE exam_id="+exam_id)
+		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE exam_id=" + exam_id)
 				.getResultList();
-		
+
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		model.addAttribute("question", listQuestions.get(0));
 		return "question";
 	}
 
-	@PostMapping("/next/{id}")
-	public String getNextQuestion(ModelMap model, @PathVariable(value = "id") String id) {
+	@PostMapping("/next/{question_id}")
+	public String getNextQuestion(ModelMap model, @PathVariable(value = "question_id") String question_id,
+			@ModelAttribute("choice_id") String choice_id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
+		// save answer
 		@SuppressWarnings("unchecked")
-		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE question_id > "+id)
+		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE choice_id =" + choice_id)
 				.getResultList();
-		
+		Choice choice = listChoices.get(0);
+		// TODO check if one at least one choice is selected
+		Answer answer = new Answer();
+		answer.setChoice(choice);
+		entityManager.persist(answer);
+		// get next question
+		@SuppressWarnings("unchecked")
+		List<Question> listQuestions = entityManager
+				.createQuery("SELECT q FROM Question q WHERE question_id > " + question_id).getResultList();
+
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		if(listQuestions.isEmpty()) {
+		if (listQuestions.isEmpty()) {
 			model.addAttribute("question", "");
-		}else {
+		} else {
 			model.addAttribute("question", listQuestions.get(0));
 		}
+		model.addAttribute("previous_question_id", question_id);
+		
 		return "question";
 	}
-	// TODO save the choice here
-	@PostMapping("/choice")
-	public String saveChoice(ModelMap model, @ModelAttribute("choiceId") String id) {
+
+	@PostMapping("/choice_result") // see the result of a selected choice
+	public String getChoiceResult(ModelMap model, @ModelAttribute("choiceId") String id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		/* TODO get choice by id */
 		entityManager.getTransaction().begin();
@@ -132,9 +146,10 @@ public class ExamController {
 		model.put("result", result);
 		return "result";
 	}
-	//TODO show the result here
-	@GetMapping("/result")
-	public String seeResult(ModelMap model, @PathVariable(value = "id") String exam_id) {
+
+	// TODO show the result here
+	@GetMapping("/result/{last_question_id}")
+	public String getResult(ModelMap model, @PathVariable(value = "last_question_id") String last_question_id) {
 
 		return "result";
 	}
