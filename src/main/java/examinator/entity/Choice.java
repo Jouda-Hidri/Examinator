@@ -23,6 +23,7 @@ public class Choice {
 	@Column(name = "choice_id")
 	private long id;
 
+	@Column(name = "choice_title")
 	private String title;
 	
 	private boolean correct;

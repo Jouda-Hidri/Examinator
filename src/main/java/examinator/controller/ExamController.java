@@ -122,7 +122,7 @@ public class ExamController {
 			model.addAttribute("question", listQuestions.get(0));
 		}
 		model.addAttribute("previous_question_id", question_id);
-		
+
 		return "question";
 	}
 
@@ -150,6 +150,22 @@ public class ExamController {
 	// TODO show the result here
 	@GetMapping("/result/{last_question_id}")
 	public String getResult(ModelMap model, @PathVariable(value = "last_question_id") String last_question_id) {
+		// SELECT c1, c2 FROM Country c1, Country c2
+		// WHERE c2 MEMBER OF c1.neighbors
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		// get the exam
+		@SuppressWarnings("unchecked")
+		List<Exam> listExams = entityManager
+				.createQuery("SELECT e FROM Exam e JOIN e.questions q WHERE q.id=" + last_question_id).getResultList();
+		Exam exam = listExams.get(0);
+
+		// select all choices of this exam that were selected (answer join choice)
+		@SuppressWarnings("unchecked")
+		List<Answer> answerList = entityManager
+				.createQuery("SELECT a From Answer a JOIN a.choice c JOIN c.question q JOIN q.exam e WHERE e.id=" + exam.getId()).getResultList();
+		
+		model.put("answerList", answerList);
 
 		return "result";
 	}

@@ -21,6 +21,7 @@ public class Exam {
 	@Column(name = "exam_id")
 	private long id;
 
+	@Column(name = "exam_title")
 	private String title;
 	
 	@OneToMany(mappedBy = "exam", cascade = CascadeType.ALL)

@@ -23,6 +23,7 @@ public class Question {
 	@Column(name = "question_id")
 	private long id;
 
+	@Column(name = "question_title")
 	private String title;
 
 	@ManyToOne
