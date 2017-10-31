@@ -118,9 +118,8 @@ public class ExamController {
 		return "question";
 	}
 
-	@GetMapping("/result/{last_question_id}")
-	public String getResult(HttpServletRequest request, ModelMap model,
-			@PathVariable(value = "last_question_id") String last_question_id) {
+	@GetMapping("/result")
+	public String getResult(HttpServletRequest request, ModelMap model) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 
@@ -135,5 +134,35 @@ public class ExamController {
 
 		return "result";
 	}
+	
+	@GetMapping("/evaluation/{id}")
+	public String getEvaluation(ModelMap model, @PathVariable(value = "id") String id) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		/* TODO get evaluation by id */
+		entityManager.getTransaction().begin();
+		@SuppressWarnings("unchecked")
+		List<Evaluation> evaluationList = entityManager.createQuery("SELECT v FROM Evaluation v WHERE evaluation_id=" + id)
+				.getResultList();
+		
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		model.addAttribute("answerList", evaluationList.get(0).getAnswers());
 
+		return "result";
+	}
+	
+	@GetMapping("/evaluations")
+	public String getEvaluationList(ModelMap model) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		@SuppressWarnings("unchecked")
+		List<Evaluation> evaluationList = entityManager.createQuery("SELECT v FROM Evaluation v")
+				.getResultList();
+		
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		model.addAttribute("evaluationList", evaluationList);
+
+		return "evaluations";
+	}
 }

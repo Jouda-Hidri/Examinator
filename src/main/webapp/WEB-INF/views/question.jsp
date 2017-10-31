@@ -13,7 +13,7 @@
 	<c:choose>
 		<c:when test="${question==''}">
 			<p>
-				<a href="../result/${previous_question_id}">see result</a>
+				<a href="../result">see result</a>
 			</p>
 			<br />
 		</c:when>

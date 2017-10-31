@@ -14,4 +14,6 @@
 			<li><a href="exam/${exam.id}">${exam.title}</a></li>
 		</c:forEach>
 	</ul>
+	<hr>
+	<p><a href="evaluations">List of evaluations</a></p>
 </body>
