@@ -8,6 +8,8 @@
 <title>Insert title here</title>
 </head>
 <body>
+<p>Evaluation id : <c:out value="${sessionScope.evaluation.id}"/><p>
+<hr>
 	<c:choose>
 		<c:when test="${question==''}">
 			<p>

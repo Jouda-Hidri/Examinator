@@ -23,8 +23,10 @@ public class Answer {
 	@JoinColumn(name = "choice_id")
 	private Choice choice;
 
-	// TODO add attribut user
-	// TODO add attribute date: when evaluation starts
+	@ManyToOne
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "evaluation_id")
+	private Evaluation evaluation;
 
 	public Choice getChoice() {
 		return choice;
@@ -40,6 +42,20 @@ public class Answer {
 		}
 	}
 
+	public Evaluation getEvaluation() {
+		return evaluation;
+	}
+
+	public void setEvaluation(Evaluation evaluation) {
+		this.evaluation = evaluation;
+		if (!evaluation.getAnswers().contains(this)) {
+			evaluation.getAnswers().add(this);
+			// warning this may cause performance issues if you have a large
+			// data
+			// set since this operation is O(n)
+		}
+	}
+	
 	public long getId() {
 		return id;
 	}
