@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import examinator.dao.AnswerDao;
+import examinator.dao.ChoiceDao;
+import examinator.dao.EvaluationDao;
+import examinator.dao.ExamDao;
+import examinator.dao.QuestionDao;
 import examinator.entity.Answer;
 import examinator.entity.Choice;
 import examinator.entity.Evaluation;
@@ -22,23 +27,16 @@ import examinator.test.TestInsert;
 
 @Controller
 public class ExamController {
+	ExamDao examDao = new ExamDao();
+	QuestionDao questionDao = new QuestionDao();
+	EvaluationDao evaluationDao = new EvaluationDao();
+	ChoiceDao choiceDao = new ChoiceDao();
+	AnswerDao answerDao = new AnswerDao();
 
 	@GetMapping("/")
 	public String hello(ModelMap model) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		try {
-
-			entityManager.getTransaction().begin();
-			@SuppressWarnings("unchecked")
-			List<Exam> listExams = entityManager.createQuery("SELECT e FROM Exam e").getResultList();
-			model.put("listExams", listExams);
-			entityManager.getTransaction().commit();
-			entityManager.close();
-
-		} catch (Exception e) {
-			entityManager.getTransaction().rollback();
-			e.printStackTrace();
-		}
+		List<Exam> listExams = examDao.findAll();
+		model.put("listExams", listExams);
 		return "welcome";
 	}
 
@@ -50,15 +48,8 @@ public class ExamController {
 
 	@GetMapping("/exam/{id}")
 	public String getExam(ModelMap model, @PathVariable(value = "id") String id) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		/* TODO get exam by id */
-		entityManager.getTransaction().begin();
-		@SuppressWarnings("unchecked")
-		List<Exam> listExams = entityManager.createQuery("SELECT e FROM Exam e WHERE exam_id=" + id).getResultList();
-		model.put("listExams", listExams);
-		entityManager.getTransaction().commit();
-		entityManager.close();
-		model.addAttribute("exam", listExams.get(0));
+		Exam exam = examDao.findById(id);
+		model.addAttribute("exam", exam);
 
 		return "exam";
 	}
@@ -66,54 +57,28 @@ public class ExamController {
 	@GetMapping("/first/{id}")
 	public String getFirstQuestion(HttpServletRequest request, ModelMap model,
 			@PathVariable(value = "id") String exam_id) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		entityManager.getTransaction().begin();
-		// get 1st question
-		@SuppressWarnings("unchecked")
-		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE exam_id=" + exam_id)
-				.getResultList();
-		model.addAttribute("question", listQuestions.get(0));
-		// persist a new evaluation
-		Evaluation evaluation = new Evaluation();
-		entityManager.persist(evaluation);
+		Question question = questionDao.findFirstQuestionByExamId(exam_id);
+		Evaluation evaluation = evaluationDao.createNewEvaluation();
+		model.addAttribute("question", question);
 		request.getSession().setAttribute("evaluation", evaluation);
-
-		entityManager.getTransaction().commit();
-		entityManager.close();
 
 		return "question";
 	}
 
-	@PostMapping("/next/{question_id}")
+	@PostMapping("/next/{current_question_id}")
 	public String getNextQuestion(HttpServletRequest request, ModelMap model,
-			@PathVariable(value = "question_id") String question_id, @ModelAttribute("choice_id") String choice_id) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		entityManager.getTransaction().begin();
-		// save answer
-		@SuppressWarnings("unchecked")
-		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE choice_id =" + choice_id)
-				.getResultList();
-		Choice choice = listChoices.get(0);
-		// TODO check if one at least one choice is selected
-		Answer answer = new Answer();
-		answer.setChoice(choice);
+			@PathVariable(value = "current_question_id") String current_question_id, @ModelAttribute("choice_id") String choice_id) {
+		
 		Evaluation evaluation = (Evaluation) request.getSession().getAttribute("evaluation");
-		answer.setEvaluation(evaluation);
-		entityManager.persist(answer);
-
-		// get next question
-		@SuppressWarnings("unchecked")
-		List<Question> listQuestions = entityManager
-				.createQuery("SELECT q FROM Question q WHERE question_id > " + question_id).getResultList();
-
-		entityManager.getTransaction().commit();
-		entityManager.close();
-		if (listQuestions.isEmpty()) {
+		Answer answer = answerDao.save(choice_id, evaluation);
+		
+		Question question = questionDao.findNextQuestionByCurrentQuestionId(current_question_id);
+		if (question == null) {
 			model.addAttribute("question", "");
 		} else {
-			model.addAttribute("question", listQuestions.get(0));
+			model.addAttribute("question", question);
 		}
-		model.addAttribute("previous_question_id", question_id);
+		model.addAttribute("previous_question_id", current_question_id);
 
 		return "question";
 	}
@@ -124,45 +89,29 @@ public class ExamController {
 		entityManager.getTransaction().begin();
 
 		Evaluation evaluation = (Evaluation) request.getSession().getAttribute("evaluation");
-		@SuppressWarnings("unchecked")
-		List<Answer> answerList = entityManager.createQuery(
-				"SELECT a From Evaluation v JOIN v.answers a JOIN a.choice c WHERE v.id="
-						+ evaluation.getId())
-				.getResultList();
+		List<Answer> answerList = answerDao.findByEvaluation(evaluation);
 
 		model.put("answerList", answerList);
 
 		return "result";
 	}
 	
-	@GetMapping("/evaluation/{id}")
-	public String getEvaluation(ModelMap model, @PathVariable(value = "id") String id) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		/* TODO get evaluation by id */
-		entityManager.getTransaction().begin();
-		@SuppressWarnings("unchecked")
-		List<Evaluation> evaluationList = entityManager.createQuery("SELECT v FROM Evaluation v WHERE evaluation_id=" + id)
-				.getResultList();
-		
-		entityManager.getTransaction().commit();
-		entityManager.close();
-		model.addAttribute("answerList", evaluationList.get(0).getAnswers());
+	@GetMapping("/evaluation/{evaluation_id}")
+	public String getEvaluation(ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
+		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
+		if(evaluation == null) {
+			model.addAttribute("answerList", null);
+		}else {
+			model.addAttribute("answerList", evaluation.getAnswers());
+		}
 
 		return "result";
 	}
 	
 	@GetMapping("/evaluations")
 	public String getEvaluationList(ModelMap model) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		entityManager.getTransaction().begin();
-		@SuppressWarnings("unchecked")
-		List<Evaluation> evaluationList = entityManager.createQuery("SELECT v FROM Evaluation v")
-				.getResultList();
-		
-		entityManager.getTransaction().commit();
-		entityManager.close();
+		List<Evaluation> evaluationList = evaluationDao.findAll();
 		model.addAttribute("evaluationList", evaluationList);
-
 		return "evaluations";
 	}
 }
