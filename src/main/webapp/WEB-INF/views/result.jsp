@@ -16,6 +16,8 @@
 			<li>${answer.choice.title} is ${answer.choice.correct}</li>
 		</c:forEach>
 	</ul>
+	<hr>
+	<p><a href="./">Return</a><p>
 
 </body>
 </html>

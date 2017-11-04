@@ -19,7 +19,6 @@ import examinator.dao.EvaluationDao;
 import examinator.dao.ExamDao;
 import examinator.dao.QuestionDao;
 import examinator.entity.Answer;
-import examinator.entity.Choice;
 import examinator.entity.Evaluation;
 import examinator.entity.Exam;
 import examinator.entity.Question;

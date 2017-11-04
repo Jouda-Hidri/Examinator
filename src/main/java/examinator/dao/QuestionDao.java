@@ -5,9 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
-import examinator.entity.Answer;
-import examinator.entity.Choice;
-import examinator.entity.Evaluation;
 import examinator.entity.Question;
 
 public class QuestionDao {
