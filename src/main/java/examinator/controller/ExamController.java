@@ -69,9 +69,9 @@ public class ExamController {
 		Question question = questionDao.findNextQuestionByCurrentQuestionId(current_question_id);
 		if (question == null) {
 			evaluationDao.finishEvaluation(evaluation);
-		} 
-			model.addAttribute("question", question);
-		
+		}
+		model.addAttribute("question", question);
+
 		return "question";
 	}
 
@@ -86,9 +86,12 @@ public class ExamController {
 			model.addAttribute("answerList", evaluation.getAnswers());
 			return "result";
 		}
-		//it will not return the next question, but the last answered question
-		//TODO show the answer on the form
-		model.addAttribute("question", evaluation.getLastAnswer().getChoice().getQuestion());
+		Question question = questionDao
+				.findNextQuestionByCurrentQuestionId(evaluation.getLastAnswer().getChoice().getQuestion().getId() + "");
+		if (question == null) {
+			evaluationDao.finishEvaluation(evaluation);
+		}
+		model.addAttribute("question", question);
 		return "question";
 	}
 
