@@ -27,6 +27,10 @@ public class Answer {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "evaluation_id")
 	private Evaluation evaluation;
+	
+	public long getId() {
+		return id;
+	}
 
 	public Choice getChoice() {
 		return choice;
@@ -55,9 +59,10 @@ public class Answer {
 			// set since this operation is O(n)
 		}
 	}
-	
-	public long getId() {
-		return id;
+
+	@Override
+	public String toString() {
+		return choice.getTitle()+ " is "+(choice.isCorrect()?"correct":"wrong");
 	}
 
 }

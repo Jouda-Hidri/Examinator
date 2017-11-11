@@ -13,7 +13,7 @@
 	<hr>
 	<ul>
 		<c:forEach items="${answerList}" var="answer">
-			<li>${answer.choice.title} is ${answer.choice.correct}</li>
+			<li>${answer}</li>
 		</c:forEach>
 	</ul>
 	<hr>
