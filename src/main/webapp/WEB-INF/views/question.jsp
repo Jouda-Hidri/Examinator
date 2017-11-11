@@ -5,11 +5,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>${sessionScope.evaluation.id}</title>
 </head>
 <body>
-<p>Evaluation id : <c:out value="${sessionScope.evaluation.id}"/><p>
-<hr>
 	<c:choose>
 		<c:when test="${question==''}">
 			<p>

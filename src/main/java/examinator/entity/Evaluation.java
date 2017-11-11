@@ -1,5 +1,8 @@
 package examinator.entity;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -16,7 +19,6 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 public class Evaluation {
-	// date
 	// one user
 
 	@Id
@@ -24,14 +26,21 @@ public class Evaluation {
 	@Column(name = "evaluation_id")
 	private long id;
 	
-	public long getId() {
-		return id;
-	}
+	LocalDateTime date = LocalDateTime.now();
 
 	// many answers
 	@OneToMany(mappedBy = "evaluation", cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<Answer> answers = new LinkedHashSet<Answer>();
+	
+	public long getId() {
+		return id;
+	}
+	
+	public String getDate() {
+		final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+		return date.format(dateTimeFormatter);
+	}
 
 	public Collection<Answer> getAnswers() {
 		return answers;

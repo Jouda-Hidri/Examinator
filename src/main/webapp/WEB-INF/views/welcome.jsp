@@ -11,9 +11,14 @@
 	<h1>List of exams</h1>
 	<ul>
 		<c:forEach items="${listExams}" var="exam">
-			<li><a href="exam/${exam.id}">${exam.title}</a></li>
+			<li><a href="first/${exam.id}">${exam.title}</a></li>
 		</c:forEach>
 	</ul>
 	<hr>
-	<p><a href="evaluations">List of evaluations</a></p>
+	<h1>List of evaluations</h1>
+	<ul>
+		<c:forEach items="${listEvaluations}" var="evaluation">
+			<li>${evaluation.date} - <a href="evaluation/${evaluation.id}">See result</a></li>
+		</c:forEach>
+	</ul>
 </body>

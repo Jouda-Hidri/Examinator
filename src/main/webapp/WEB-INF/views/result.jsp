@@ -17,7 +17,7 @@
 		</c:forEach>
 	</ul>
 	<hr>
-	<p><a href="./">Return</a><p>
+	<p><a href="<%=request.getContextPath()%>">Return</a><p>
 
 </body>
 </html>

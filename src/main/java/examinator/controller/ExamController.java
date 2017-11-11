@@ -35,7 +35,9 @@ public class ExamController {
 	@GetMapping("/")
 	public String hello(ModelMap model) {
 		List<Exam> listExams = examDao.findAll();
+		List<Evaluation> listEvaluations = evaluationDao.findAll();
 		model.put("listExams", listExams);
+		model.addAttribute("listEvaluations", listEvaluations);
 		return "welcome";
 	}
 
@@ -43,14 +45,6 @@ public class ExamController {
 	public String initExamAndQuestions(ModelMap model) {
 		TestInsert.createOneExamWithfiveQuestions();
 		return "welcome";
-	}
-
-	@GetMapping("/exam/{id}")
-	public String getExam(ModelMap model, @PathVariable(value = "id") String id) {
-		Exam exam = examDao.findById(id);
-		model.addAttribute("exam", exam);
-
-		return "exam";
 	}
 
 	@GetMapping("/first/{id}")
@@ -105,12 +99,5 @@ public class ExamController {
 		}
 
 		return "result";
-	}
-	
-	@GetMapping("/evaluations")
-	public String getEvaluationList(ModelMap model) {
-		List<Evaluation> evaluationList = evaluationDao.findAll();
-		model.addAttribute("evaluationList", evaluationList);
-		return "evaluations";
 	}
 }
