@@ -35,27 +35,35 @@ public class EvaluationDao {
 		}
 		return evaluationList.get(0);
 	}
-	
+
 	public List<Evaluation> findAll() {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 		@SuppressWarnings("unchecked")
-		List<Evaluation> evaluationList = entityManager.createQuery("SELECT v FROM Evaluation v")
-				.getResultList();
-		
+		List<Evaluation> evaluationList = entityManager.createQuery("SELECT v FROM Evaluation v").getResultList();
+
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return evaluationList;
 	}
 
-	public void finishEvaluation(Evaluation evaluation) {
+	public void finish(Evaluation evaluation) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 		evaluation.setFinished();
 		entityManager.merge(evaluation);
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		
+
+	}
+
+	public void delete(Evaluation evaluation) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		Evaluation evaluation_retrieved = entityManager.find(Evaluation.class, evaluation.getId());
+		entityManager.getTransaction().begin();
+		entityManager.remove(evaluation_retrieved);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 }

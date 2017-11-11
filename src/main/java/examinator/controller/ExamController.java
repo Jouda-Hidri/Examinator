@@ -52,8 +52,8 @@ public class ExamController {
 			@PathVariable(value = "id") String exam_id) {
 		Question question = questionDao.findFirstQuestionByExamId(exam_id);
 		Evaluation evaluation = evaluationDao.createNewEvaluation();
-		model.addAttribute("question", question);
 		request.getSession().setAttribute("evaluation", evaluation);
+		model.addAttribute("question", question);
 
 		return "question";
 	}
@@ -68,7 +68,7 @@ public class ExamController {
 
 		Question question = questionDao.findNextQuestionByCurrentQuestionId(current_question_id);
 		if (question == null) {
-			evaluationDao.finishEvaluation(evaluation);
+			evaluationDao.finish(evaluation);
 		}
 		model.addAttribute("question", question);
 
@@ -76,12 +76,13 @@ public class ExamController {
 	}
 
 	@GetMapping("/evaluation/{evaluation_id}")
-	public String getEvaluation(ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
+	public String getEvaluation(HttpServletRequest request, ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
 		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
+		request.getSession().setAttribute("evaluation", evaluation);
 		//TODO update the session for the evaluation
 		if (evaluation == null || evaluation.getAnswers().isEmpty()) {
-			// TODO delete this evaluation from database
-			return hello(model);
+			evaluationDao.delete(evaluation);
+			return "error";
 		}
 		if (evaluation.isFinished()) {
 			model.addAttribute("answerList", evaluation.getAnswers());
@@ -90,7 +91,7 @@ public class ExamController {
 		Question question = questionDao
 				.findNextQuestionByCurrentQuestionId(evaluation.getLastAnswer().getChoice().getQuestion().getId() + "");
 		if (question == null) {
-			evaluationDao.finishEvaluation(evaluation);
+			evaluationDao.finish(evaluation);
 		}
 		model.addAttribute("question", question);
 		return "question";
