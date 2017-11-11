@@ -4,9 +4,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Error</title>
+<title>${message}</title>
 </head>
 <body>
-
+<h1>${message}</h1>
+	<hr>
+	<p>${message}<p>
+	<hr>
+	<button onclick="goBack()">Go Back</button>
 </body>
 </html>

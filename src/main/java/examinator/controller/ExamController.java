@@ -62,6 +62,12 @@ public class ExamController {
 	public String getNextQuestion(HttpServletRequest request, ModelMap model,
 			@PathVariable(value = "current_question_id") String current_question_id,
 			@ModelAttribute("choice_id") String choice_id) {
+		
+		if(choice_id.equals("")) {
+			String message = "No choice was selected.";
+			model.addAttribute("message", message);
+			return "error";
+		}
 
 		Evaluation evaluation = (Evaluation) request.getSession().getAttribute("evaluation");
 		Answer answer = answerDao.save(choice_id, evaluation);
@@ -79,9 +85,11 @@ public class ExamController {
 	public String getEvaluation(HttpServletRequest request, ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
 		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
 		request.getSession().setAttribute("evaluation", evaluation);
-		//TODO update the session for the evaluation
 		if (evaluation == null || evaluation.getAnswers().isEmpty()) {
 			evaluationDao.delete(evaluation);
+			
+			String message = "This evalution is empty.";
+			model.addAttribute("message", message);
 			return "error";
 		}
 		if (evaluation.isFinished()) {
