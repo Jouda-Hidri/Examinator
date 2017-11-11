@@ -78,9 +78,10 @@ public class ExamController {
 	@GetMapping("/evaluation/{evaluation_id}")
 	public String getEvaluation(ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
 		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
+		//TODO update the session for the evaluation
 		if (evaluation == null || evaluation.getAnswers().isEmpty()) {
-			// add message error
-			return "welcome";
+			// TODO delete this evaluation from database
+			return hello(model);
 		}
 		if (evaluation.isFinished()) {
 			model.addAttribute("answerList", evaluation.getAnswers());
