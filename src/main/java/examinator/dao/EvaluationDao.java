@@ -48,4 +48,14 @@ public class EvaluationDao {
 		return evaluationList;
 	}
 
+	public void finishEvaluation(Evaluation evaluation) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		evaluation.setFinished();
+		entityManager.merge(evaluation);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		
+	}
+
 }

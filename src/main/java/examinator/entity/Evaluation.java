@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import javax.persistence.CascadeType;
@@ -25,21 +26,31 @@ public class Evaluation {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "evaluation_id")
 	private long id;
-	
+
 	LocalDateTime date = LocalDateTime.now();
+
+	boolean finished = false;
 
 	// many answers
 	@OneToMany(mappedBy = "evaluation", cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<Answer> answers = new LinkedHashSet<Answer>();
-	
+
 	public long getId() {
 		return id;
 	}
-	
+
 	public String getDate() {
 		final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
 		return date.format(dateTimeFormatter);
+	}
+
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished() {
+		this.finished = true;
 	}
 
 	public Collection<Answer> getAnswers() {
@@ -58,5 +69,14 @@ public class Evaluation {
 		if (answer.getEvaluation() != this) {
 			answer.setEvaluation(this);
 		}
+	}
+
+	public Answer getLastAnswer() {
+		Iterator<Answer> it = answers.iterator();
+		Answer lastAnswer = null;
+		while (it.hasNext()) {
+			lastAnswer = it.next();
+		}
+		return lastAnswer;
 	}
 }

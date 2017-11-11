@@ -18,7 +18,7 @@
 	<h1>List of evaluations</h1>
 	<ul>
 		<c:forEach items="${listEvaluations}" var="evaluation">
-			<li>${evaluation.date} - <a href="evaluation/${evaluation.id}">See result</a></li>
+			<li>${evaluation.date} - <a href="evaluation/${evaluation.id}">See Evaluation</a></li>
 		</c:forEach>
 	</ul>
 </body>

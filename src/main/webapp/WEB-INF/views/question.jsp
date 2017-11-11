@@ -9,7 +9,7 @@
 </head>
 <body>
 	<c:choose>
-		<c:when test="${question==''}">
+		<c:when test="${question==null}">
 			<p>
 				<a href="../result">see result</a>
 			</p>

@@ -60,19 +60,35 @@ public class ExamController {
 
 	@PostMapping("/next/{current_question_id}")
 	public String getNextQuestion(HttpServletRequest request, ModelMap model,
-			@PathVariable(value = "current_question_id") String current_question_id, @ModelAttribute("choice_id") String choice_id) {
-		
+			@PathVariable(value = "current_question_id") String current_question_id,
+			@ModelAttribute("choice_id") String choice_id) {
+
 		Evaluation evaluation = (Evaluation) request.getSession().getAttribute("evaluation");
 		Answer answer = answerDao.save(choice_id, evaluation);
-		
+
 		Question question = questionDao.findNextQuestionByCurrentQuestionId(current_question_id);
 		if (question == null) {
-			model.addAttribute("question", "");
-		} else {
+			evaluationDao.finishEvaluation(evaluation);
+		} 
 			model.addAttribute("question", question);
-		}
-		model.addAttribute("previous_question_id", current_question_id);
+		
+		return "question";
+	}
 
+	@GetMapping("/evaluation/{evaluation_id}")
+	public String getEvaluation(ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
+		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
+		if (evaluation == null || evaluation.getAnswers().isEmpty()) {
+			// add message error
+			return "welcome";
+		}
+		if (evaluation.isFinished()) {
+			model.addAttribute("answerList", evaluation.getAnswers());
+			return "result";
+		}
+		//it will not return the next question, but the last answered question
+		//TODO show the answer on the form
+		model.addAttribute("question", evaluation.getLastAnswer().getChoice().getQuestion());
 		return "question";
 	}
 
@@ -85,18 +101,6 @@ public class ExamController {
 		List<Answer> answerList = answerDao.findByEvaluation(evaluation);
 
 		model.put("answerList", answerList);
-
-		return "result";
-	}
-	
-	@GetMapping("/evaluation/{evaluation_id}")
-	public String getEvaluation(ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
-		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
-		if(evaluation == null) {
-			model.addAttribute("answerList", null);
-		}else {
-			model.addAttribute("answerList", evaluation.getAnswers());
-		}
 
 		return "result";
 	}

@@ -13,6 +13,7 @@ public class QuestionDao {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 		// get 1st question
+		//TODO order by
 		@SuppressWarnings("unchecked")
 		List<Question> listQuestions = entityManager.createQuery("SELECT q FROM Question q WHERE exam_id=" + exam_id)
 				.getResultList();
@@ -26,6 +27,7 @@ public class QuestionDao {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 		// get next question
+		//TODO order by
 		@SuppressWarnings("unchecked")
 		List<Question> listQuestions = entityManager
 				.createQuery("SELECT q FROM Question q WHERE question_id > " + current_question_id).getResultList();
