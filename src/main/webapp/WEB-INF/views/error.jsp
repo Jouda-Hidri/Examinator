@@ -7,10 +7,10 @@
 <title>${message}</title>
 </head>
 <body>
-<h1>${message}</h1>
+<h1>Error!</h1>
 	<hr>
 	<p>${message}<p>
 	<hr>
-	<button onclick="goBack()">Go Back</button>
+	<FORM> <INPUT TYPE="button" VALUE="Go Back" onClick="history.go(-1)"> </FORM>
 </body>
 </html>
