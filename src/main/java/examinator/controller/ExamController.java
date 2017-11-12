@@ -34,11 +34,16 @@ public class ExamController {
 
 	@GetMapping("/")
 	public String hello(ModelMap model) {
+		return "welcome";
+	}
+	
+	@GetMapping("/list")
+	public String getList(ModelMap model) {
 		List<Exam> listExams = examDao.findAll();
 		List<Evaluation> listEvaluations = evaluationDao.findAll();
 		model.put("listExams", listExams);
 		model.addAttribute("listEvaluations", listEvaluations);
-		return "welcome";
+		return "list";
 	}
 
 	@GetMapping("/init")
