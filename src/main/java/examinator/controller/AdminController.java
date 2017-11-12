@@ -16,7 +16,12 @@ public class AdminController {
 	}
 	
 	@GetMapping("/create")
-	public String hello(ModelMap model) {
+	public String createExam(ModelMap model) {
+		return "create";
+	}
+	
+	@GetMapping("/save")
+	public String saveExam(ModelMap model) {
 		return "create";
 	}
 

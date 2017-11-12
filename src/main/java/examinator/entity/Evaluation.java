@@ -13,15 +13,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+
 @Entity
 public class Evaluation {
-	// one user
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "evaluation_id")
@@ -31,7 +32,11 @@ public class Evaluation {
 
 	boolean finished = false;
 
-	// many answers
+	@ManyToOne
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "student_id")
+	private Student student;
+	
 	@OneToMany(mappedBy = "evaluation", cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<Answer> answers = new LinkedHashSet<Answer>();
