@@ -1,5 +1,6 @@
 package examinator.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -37,6 +38,11 @@ public class ExamController {
 
 	@GetMapping("/")
 	public String hello(ModelMap model) {
+		//in case the database is empty add a test student
+		Student student = studentDao.findAll();
+		if(student == null) {
+			TestInsert.createStudent();
+		}
 		return "welcome";
 	}
 	
@@ -55,17 +61,15 @@ public class ExamController {
 	@GetMapping("/list")
 	public String getList(ModelMap model) {
 		List<Exam> listExams = examDao.findAll();
+		//in case the database is empty, add a test exam
+		if(listExams.isEmpty()) {
+			listExams = new ArrayList<Exam>();
+			listExams.add(TestInsert.createOneExamWithfiveQuestions());
+		}
 		List<Evaluation> listEvaluations = evaluationDao.findAll();
 		model.put("listExams", listExams);
 		model.addAttribute("listEvaluations", listEvaluations);
 		return "list";
-	}
-
-	@GetMapping("/init")
-	public String initExamAndQuestions(ModelMap model) {
-//		TestInsert.createOneExamWithfiveQuestions();
-		TestInsert.createStudent();
-		return "welcome";
 	}
 
 	@GetMapping("/first/{id}")

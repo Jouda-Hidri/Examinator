@@ -9,7 +9,7 @@ import examinator.entity.Question;
 import examinator.entity.Student;
 
 public class TestInsert {
-	public static void createOneExamWithfiveQuestions() {
+	public static Exam createOneExamWithfiveQuestions() {
 
 		Exam exam = new Exam();
 		Choice choice1 = new Choice();
@@ -69,6 +69,8 @@ public class TestInsert {
 		entityManager.getTransaction().begin();
 		entityManager.persist(exam);
 		entityManager.getTransaction().commit();
+		
+		return exam;
 
 	}
 	

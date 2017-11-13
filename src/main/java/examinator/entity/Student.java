@@ -22,7 +22,7 @@ public class Student {
 	@Column(name = "student_id")
 	private long id;
 
-	String name; // TODO change to username
+	String username;
 	String password;
 
 	// many evaluations
@@ -35,7 +35,7 @@ public class Student {
 	}
 
 	public Student(String username, String password) {
-		this.name = username;
+		this.username = username;
 		this.password = password;
 	}
 
