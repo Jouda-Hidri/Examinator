@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
-import examinator.entity.Evaluation;
 import examinator.entity.Exam;
 
 public class ExamDao {

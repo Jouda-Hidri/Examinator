@@ -18,10 +18,12 @@ import examinator.dao.ChoiceDao;
 import examinator.dao.EvaluationDao;
 import examinator.dao.ExamDao;
 import examinator.dao.QuestionDao;
+import examinator.dao.StudentDao;
 import examinator.entity.Answer;
 import examinator.entity.Evaluation;
 import examinator.entity.Exam;
 import examinator.entity.Question;
+import examinator.entity.Student;
 import examinator.test.TestInsert;
 
 @Controller
@@ -31,9 +33,22 @@ public class ExamController {
 	EvaluationDao evaluationDao = new EvaluationDao();
 	ChoiceDao choiceDao = new ChoiceDao();
 	AnswerDao answerDao = new AnswerDao();
+	StudentDao studentDao = new StudentDao();
 
 	@GetMapping("/")
 	public String hello(ModelMap model) {
+		return "welcome";
+	}
+	
+	@PostMapping("/login")
+	public String login(HttpServletRequest request, ModelMap model,
+			@ModelAttribute("username") String username, @ModelAttribute("username") String password) {
+		Student student = studentDao.findByUsernameAndPassword(username, password);
+		if(student == null) {
+			model.addAttribute("message", "Username or password is uncorrect.");
+			return "error";
+		}
+		request.getSession().setAttribute("student", student);
 		return "welcome";
 	}
 	
@@ -48,7 +63,8 @@ public class ExamController {
 
 	@GetMapping("/init")
 	public String initExamAndQuestions(ModelMap model) {
-		TestInsert.createOneExamWithfiveQuestions();
+//		TestInsert.createOneExamWithfiveQuestions();
+		TestInsert.createStudent();
 		return "welcome";
 	}
 

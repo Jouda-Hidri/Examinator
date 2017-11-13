@@ -6,6 +6,7 @@ import javax.persistence.Persistence;
 import examinator.entity.Choice;
 import examinator.entity.Exam;
 import examinator.entity.Question;
+import examinator.entity.Student;
 
 public class TestInsert {
 	public static void createOneExamWithfiveQuestions() {
@@ -69,6 +70,14 @@ public class TestInsert {
 		entityManager.persist(exam);
 		entityManager.getTransaction().commit();
 
+	}
+	
+	public static void createStudent() {
+		Student student = new Student("test", "test");
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.persist(student);
+		entityManager.getTransaction().commit();
 	}
 
 }

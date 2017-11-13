@@ -16,18 +16,27 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 public class Student {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "student_id")
 	private long id;
-	
-	String name;
+
+	String name; // TODO change to username
 	String password;
-	
+
 	// many evaluations
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Collection<Evaluation> evaluations = new LinkedHashSet<Evaluation>();
+
+	public Student() {
+
+	}
+
+	public Student(String username, String password) {
+		this.name = username;
+		this.password = password;
+	}
 
 }
