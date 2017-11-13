@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import examinator.entity.Evaluation;
 import examinator.entity.Exam;
 
 public class ExamDao {
@@ -37,6 +38,14 @@ public class ExamDao {
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return listExams.get(0);
+	}
+
+	public void save(Exam exam) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.persist(exam);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 }
