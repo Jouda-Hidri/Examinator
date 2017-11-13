@@ -72,7 +72,12 @@ public class ExamController {
 	public String getFirstQuestion(HttpServletRequest request, ModelMap model,
 			@PathVariable(value = "id") String exam_id) {
 		Question question = questionDao.findFirstQuestionByExamId(exam_id);
-		Evaluation evaluation = evaluationDao.createNewEvaluation();
+		Student student = (Student) request.getSession().getAttribute("student");
+		if(student == null) {
+			model.addAttribute("message", "You have been disconnected!");
+			return "error";
+		}
+		Evaluation evaluation = evaluationDao.createNewEvaluation(student);
 		request.getSession().setAttribute("evaluation", evaluation);
 		model.addAttribute("question", question);
 

@@ -57,6 +57,10 @@ public class Evaluation {
 	public void setFinished() {
 		this.finished = true;
 	}
+	
+	public void setStudent(Student student) {
+		this.student = student;
+	}
 
 	public Collection<Answer> getAnswers() {
 		return answers;

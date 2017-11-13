@@ -5,14 +5,18 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import examinator.entity.Evaluation;
+import examinator.entity.Student;
 
 public class EvaluationDao {
 
-	public Evaluation createNewEvaluation() {
+	public Evaluation createNewEvaluation(Student student) {
 
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
+		
 		Evaluation evaluation = new Evaluation();
+		evaluation.setStudent(student);
+		
 		entityManager.persist(evaluation);
 		entityManager.getTransaction().commit();
 		entityManager.close();

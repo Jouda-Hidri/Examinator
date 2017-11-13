@@ -12,7 +12,7 @@ public class StudentDao {
 	public Student findByUsernameAndPassword(String username, String password) {
 
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		/* TODO get exam by id */
+		/* TODO get student by id */
 		entityManager.getTransaction().begin();
 		@SuppressWarnings("unchecked")
 		List<Student> listStudents = entityManager.createQuery("SELECT s FROM Student s WHERE name='" + username + "' AND password='"+password+"'").getResultList();
