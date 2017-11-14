@@ -1,5 +1,6 @@
 package examinator.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -13,10 +14,10 @@ public class EvaluationDao {
 
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
-		
+
 		Evaluation evaluation = new Evaluation();
 		evaluation.setStudent(student);
-		
+
 		entityManager.persist(evaluation);
 		entityManager.getTransaction().commit();
 		entityManager.close();
@@ -44,11 +45,19 @@ public class EvaluationDao {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 		@SuppressWarnings("unchecked")
-		List<Evaluation> evaluationList = entityManager.createQuery("SELECT v FROM Evaluation v").getResultList();
+		List<Evaluation> listEvaluations = entityManager.createQuery("SELECT v FROM Evaluation v").getResultList();
+
+		List<Evaluation> listNonEmptyEvaluations = new ArrayList<Evaluation>();
+		for (Evaluation evaluation : listEvaluations) {
+			if (!evaluation.getAnswers().isEmpty()) {
+				listNonEmptyEvaluations.add(evaluation);
+			}
+		}
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		return evaluationList;
+
+		return listNonEmptyEvaluations;
 	}
 
 	public void finish(Evaluation evaluation) {
@@ -60,14 +69,4 @@ public class EvaluationDao {
 		entityManager.close();
 
 	}
-
-	public void delete(Evaluation evaluation) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		Evaluation evaluation_retrieved = entityManager.find(Evaluation.class, evaluation.getId());
-		entityManager.getTransaction().begin();
-		entityManager.remove(evaluation_retrieved);
-		entityManager.getTransaction().commit();
-		entityManager.close();
-	}
-
 }

@@ -116,9 +116,7 @@ public class ExamController {
 		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
 		request.getSession().setAttribute("evaluation", evaluation);
 		if (evaluation == null || evaluation.getAnswers().isEmpty()) {
-			evaluationDao.delete(evaluation);
-			
-			String message = "This evalution is empty.";
+			String message = "This evalution does not exist.";
 			model.addAttribute("message", message);
 			return "error";
 		}

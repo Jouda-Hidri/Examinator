@@ -91,9 +91,6 @@ public class Evaluation {
 
 	@Override
 	public String toString() {
-		if (answers.isEmpty()) {
-			return "This evaluation dit not start.";
-		}
 		if (finished) {
 			return "See the result.";
 		}
