@@ -88,5 +88,10 @@ public class Choice {
             answer.setChoice(this);
         }
     }
+
+	@Override
+	public String toString() {
+		return  title + (correct?" (correct)":"");
+	}
 	
 }

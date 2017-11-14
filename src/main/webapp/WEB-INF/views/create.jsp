@@ -25,10 +25,10 @@
 					<h1>Save this exam</h1>
 					<ol>
 						<c:forEach items="${exam.questions}" var="question">
-							<li><h2>${question.title}</h2>
+							<li><h2>${question}</h2>
 								<ul>
 									<c:forEach items="${question.choices}" var="choice">
-										<li>${choice.title}</li>
+										<li>${choice}</li>
 									</c:forEach>
 								</ul></li>
 						</c:forEach>
