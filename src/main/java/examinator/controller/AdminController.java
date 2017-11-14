@@ -32,6 +32,11 @@ public class AdminController {
 	
 	@PostMapping("/create")
 	public String createExam(HttpServletRequest request, ModelMap model, @ModelAttribute("title") String title) {
+		if(title.equals("")) {
+			String message = "An exam cannot have an empty title!";
+			model.addAttribute("message", message);
+			return "error";
+		}
 		Exam exam = new Exam();
 		exam.setTitle(title);
 		request.getSession().setAttribute("exam", exam);
@@ -43,6 +48,11 @@ public class AdminController {
 	public String addQuestion(HttpServletRequest request, ModelMap model, @ModelAttribute("title") String title,
 			@ModelAttribute("choice_1") String choice_1, @ModelAttribute("choice_2") String choice_2,
 			@ModelAttribute("choice_3") String choice_3, @ModelAttribute("choice_id") String choice_id) {
+		if(title.equals("") || choice_1.equals("") || choice_2.equals("") || choice_3.equals("") || choice_id.equals("")) {
+			String message = "The question and the choices cannot be empty!";
+			model.addAttribute("message", message);
+			return "error";
+		}
 		Question question = new Question();
 		question.setTitle(title);
 		Choice c1 = new Choice();
