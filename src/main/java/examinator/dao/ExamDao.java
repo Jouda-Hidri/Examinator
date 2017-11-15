@@ -26,14 +26,14 @@ public class ExamDao {
 		return listExams;
 	}
 
-	public Exam findById(String id) {
+	public Exam findById(long exam_id) {
 
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		/* TODO get exam by id */
 		entityManager.getTransaction().begin();
 		@SuppressWarnings("unchecked")
-		List<Exam> listExams = entityManager.createQuery("SELECT e FROM Exam e WHERE exam_id=" + id).getResultList();
-		// model.put("listExams", listExams);
+		List<Exam> listExams = entityManager.createQuery("SELECT e FROM Exam e WHERE exam_id = :exam_id")
+		.setParameter("exam_id", exam_id)
+		.getResultList();
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return listExams.get(0);

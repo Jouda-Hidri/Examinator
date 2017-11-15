@@ -25,13 +25,13 @@ public class EvaluationDao {
 
 	}
 
-	public Evaluation findByID(String evaluation_id) {
+	public Evaluation findByID(long evaluation_id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		/* TODO get evaluation by id */
 		entityManager.getTransaction().begin();
 		@SuppressWarnings("unchecked")
 		List<Evaluation> evaluationList = entityManager
-				.createQuery("SELECT v FROM Evaluation v WHERE evaluation_id=" + evaluation_id).getResultList();
+				.createQuery("SELECT v FROM Evaluation v WHERE evaluation_id = :evaluation_id")
+				.setParameter("evaluation_id", evaluation_id).getResultList();
 
 		entityManager.getTransaction().commit();
 		entityManager.close();

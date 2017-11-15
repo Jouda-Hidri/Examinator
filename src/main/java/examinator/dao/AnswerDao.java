@@ -11,13 +11,14 @@ import examinator.entity.Evaluation;
 
 public class AnswerDao {
 
-	public Answer save(String choice_id, Evaluation evaluation) {
+	public Answer save(long choice_id, Evaluation evaluation) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 
 		@SuppressWarnings("unchecked")
 		// find the choice by id
-		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE choice_id =" + choice_id)
+		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE choice_id = :choice_id")
+				.setParameter("choice_id", choice_id)
 				.getResultList();
 		Choice choice = listChoices.get(0);
 		// create a new answer instance
@@ -38,8 +39,8 @@ public class AnswerDao {
 		
 		@SuppressWarnings("unchecked")
 		List<Answer> answerList = entityManager.createQuery(
-				"SELECT a From Evaluation v JOIN v.answers a JOIN a.choice c WHERE v.id="
-						+ evaluation.getId())
+				"SELECT a From Evaluation v JOIN v.answers a JOIN a.choice c WHERE v.id= :evaluation_id")
+				.setParameter("evaluation_id", evaluation.getId())
 				.getResultList();
 		
 		entityManager.getTransaction().commit();

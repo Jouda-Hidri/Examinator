@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import examinator.dao.AnswerDao;
-import examinator.dao.ChoiceDao;
 import examinator.dao.EvaluationDao;
 import examinator.dao.ExamDao;
 import examinator.dao.QuestionDao;
@@ -32,15 +31,14 @@ public class ExamController {
 	ExamDao examDao = new ExamDao();
 	QuestionDao questionDao = new QuestionDao();
 	EvaluationDao evaluationDao = new EvaluationDao();
-	ChoiceDao choiceDao = new ChoiceDao();
 	AnswerDao answerDao = new AnswerDao();
 	StudentDao studentDao = new StudentDao();
 
 	@GetMapping("/")
 	public String hello(ModelMap model) {
 		//in case the database is empty add a test student
-		Student student = studentDao.findAll();
-		if(student == null) {
+		List<Student> listStudents = studentDao.findAll();
+		if(listStudents.isEmpty()) {
 			TestInsert.createStudent();
 		}
 		return "welcome";
@@ -74,7 +72,7 @@ public class ExamController {
 
 	@GetMapping("/first/{id}")
 	public String getFirstQuestion(HttpServletRequest request, ModelMap model,
-			@PathVariable(value = "id") String exam_id) {
+			@PathVariable(value = "id") long exam_id) {
 		Question question = questionDao.findFirstQuestionByExamId(exam_id);
 		Student student = (Student) request.getSession().getAttribute("student");
 		if(student == null) {
@@ -83,6 +81,7 @@ public class ExamController {
 		}
 		Evaluation evaluation = evaluationDao.createNewEvaluation(student);
 		request.getSession().setAttribute("evaluation", evaluation);
+		request.getSession().setAttribute("exam_id", exam_id);
 		model.addAttribute("question", question);
 
 		return "question";
@@ -90,19 +89,32 @@ public class ExamController {
 
 	@PostMapping("/next/{current_question_id}")
 	public String getNextQuestion(HttpServletRequest request, ModelMap model,
-			@PathVariable(value = "current_question_id") String current_question_id,
-			@ModelAttribute("choice_id") String choice_id) {
+			@PathVariable(value = "current_question_id") long current_question_id,
+			@ModelAttribute("choice_id") String choice_id_str) {
 		
-		if(choice_id.equals("")) {
+		if(choice_id_str.equals("")) {
 			String message = "No choice was selected.";
 			model.addAttribute("message", message);
 			return "error";
 		}
 
+		long choice_id = Long.parseLong(choice_id_str, 10);
+		
+		
 		Evaluation evaluation = (Evaluation) request.getSession().getAttribute("evaluation");
+		if(evaluation == null) {
+			model.addAttribute("message", "You have been disconnected!");
+			return "error";
+		}
 		Answer answer = answerDao.save(choice_id, evaluation);
 
-		Question question = questionDao.findNextQuestionByCurrentQuestionId(current_question_id);
+		if(request.getSession().getAttribute("exam_id") == null) {
+			model.addAttribute("message", "You have been disconnected!");
+			return "error";
+		}
+		long exam_id = (long) request.getSession().getAttribute("exam_id");
+
+		Question question = questionDao.findNextQuestionByCurrentExamIdAndQuestionId(exam_id, current_question_id);
 		if (question == null) {
 			evaluationDao.finish(evaluation);
 		}
@@ -112,7 +124,7 @@ public class ExamController {
 	}
 
 	@GetMapping("/evaluation/{evaluation_id}")
-	public String getEvaluation(HttpServletRequest request, ModelMap model, @PathVariable(value = "evaluation_id") String evaluation_id) {
+	public String getEvaluation(HttpServletRequest request, ModelMap model, @PathVariable(value = "evaluation_id") long evaluation_id) {
 		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
 		request.getSession().setAttribute("evaluation", evaluation);
 		if (evaluation == null || evaluation.getAnswers().isEmpty()) {
@@ -124,8 +136,11 @@ public class ExamController {
 			model.addAttribute("answerList", evaluation.getAnswers());
 			return "result";
 		}
+		Question current_question = evaluation.getLastAnswer().getChoice().getQuestion();
+		long exam_id = current_question.getExam().getId();
+		long question_id = current_question.getId();
 		Question question = questionDao
-				.findNextQuestionByCurrentQuestionId(evaluation.getLastAnswer().getChoice().getQuestion().getId() + "");
+				.findNextQuestionByCurrentExamIdAndQuestionId(exam_id, question_id);
 		if (question == null) {
 			evaluationDao.finish(evaluation);
 		}

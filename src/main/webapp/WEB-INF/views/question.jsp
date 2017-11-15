@@ -20,7 +20,7 @@
 			<hr>
 			<form action="../next/${question.id}" method="post">
 				<c:forEach items="${question.choices}" var="choice">
-					<input type="radio" name="choice_id" value="${choice.id}">Choice : ${choice.title}<br>
+					<input type="radio" name="choice_id" value="${choice.id}">${choice.title}<br>
 				</c:forEach>
 				<input type="submit" value="next">
 			</form>
