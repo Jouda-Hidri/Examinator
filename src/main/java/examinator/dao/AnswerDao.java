@@ -5,32 +5,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import org.springframework.stereotype.Component;
+
 import examinator.entity.Answer;
-import examinator.entity.Choice;
 import examinator.entity.Evaluation;
+import examinator.entity.Exam;
 
+@Component
 public class AnswerDao {
-
-	public Answer save(long choice_id, Evaluation evaluation) {
-		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
-		entityManager.getTransaction().begin();
-
-		@SuppressWarnings("unchecked")
-		// find the choice by id
-		List<Choice> listChoices = entityManager.createQuery("SELECT c FROM Choice c WHERE choice_id = :choice_id")
-				.setParameter("choice_id", choice_id)
-				.getResultList();
-		Choice choice = listChoices.get(0);
-		// create a new answer instance
-		Answer answer = new Answer();
-		// set the choice and the current evaluation
-		answer.setChoice(choice);
-		answer.setEvaluation(evaluation);
-
-		entityManager.getTransaction().commit();
-		entityManager.close();
-		return answer;
-	}
 
 	public List<Answer> findByEvaluation(Evaluation evaluation){
 		
@@ -47,6 +29,15 @@ public class AnswerDao {
 		entityManager.close();
 		
 		return answerList;
+	}
+	
+	public Answer save(Answer answer) {
+		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.persist(answer);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		return answer;
 	}
 
 }

@@ -5,8 +5,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import org.springframework.stereotype.Component;
+
 import examinator.entity.Student;
 
+@Component
 public class StudentDao {
 	
 	public List<Student> findAll() {

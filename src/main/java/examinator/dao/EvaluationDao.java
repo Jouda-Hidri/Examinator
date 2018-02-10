@@ -5,20 +5,21 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-import examinator.entity.Evaluation;
-import examinator.entity.Student;
 
+import org.springframework.stereotype.Component;
+
+import examinator.entity.Evaluation;
+
+@Component
 public class EvaluationDao {
 
-	public Evaluation createNewEvaluation(Student student) {
+	public Evaluation save(Evaluation evaluation) {
 
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 
-		Evaluation evaluation = new Evaluation();
-		evaluation.setStudent(student);
-
 		entityManager.persist(evaluation);
+		
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		return evaluation;
@@ -60,11 +61,12 @@ public class EvaluationDao {
 		return listNonEmptyEvaluations;
 	}
 
-	public void finish(Evaluation evaluation) {
+	public void update(Evaluation evaluation) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
-		evaluation.setFinished();
+		
 		entityManager.merge(evaluation);
+		
 		entityManager.getTransaction().commit();
 		entityManager.close();
 

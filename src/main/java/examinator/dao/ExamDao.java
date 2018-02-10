@@ -6,10 +6,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import org.springframework.stereotype.Component;
+
 import examinator.entity.Exam;
 
+@Component
 public class ExamDao {
 
+	@SuppressWarnings("unchecked")
 	public List<Exam> findAll() {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		List<Exam> listExams = new ArrayList<Exam>();

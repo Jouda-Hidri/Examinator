@@ -5,11 +5,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
+import org.springframework.stereotype.Component;
+
 import examinator.entity.Question;
 
+@Component
 public class QuestionDao {
 
-	public Question findFirstQuestionByExamId(long exam_id) {
+	public List<Question> findQuestionByExamId(long exam_id) {
 		EntityManager entityManager = Persistence.createEntityManagerFactory("examinatorpu").createEntityManager();
 		entityManager.getTransaction().begin();
 		// get 1st question
@@ -21,7 +24,7 @@ public class QuestionDao {
 		
 		entityManager.getTransaction().commit();
 		entityManager.close();
-		return listQuestions.get(0);
+		return listQuestions;
 	}
 
 	public Question findNextQuestionByCurrentExamIdAndQuestionId(long exam_id, long current_question_id) {

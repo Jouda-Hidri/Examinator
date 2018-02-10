@@ -35,7 +35,6 @@ You can also install pgAdmin as a user interface for the database.
 ### Dependencies
 -Java 1.8,   
 -Spring MVC 4.3.4.RELEASE,   
--Hibernate 4,   
 -JPA 2.0,   
 -PostgreSQL 9.4-1200-jdbc41.   
 
@@ -55,4 +54,4 @@ based on what you chose during the installation of pgAdmin.
 
 ### Repo Owner
 Jouda Hidri   
-mail me on hidrijouda@gmail.com
+mail me at hidrijouda@gmail.com

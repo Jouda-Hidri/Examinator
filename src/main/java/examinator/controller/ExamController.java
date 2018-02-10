@@ -1,12 +1,12 @@
 package examinator.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,40 +14,32 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import examinator.dao.AnswerDao;
-import examinator.dao.EvaluationDao;
-import examinator.dao.ExamDao;
-import examinator.dao.QuestionDao;
-import examinator.dao.StudentDao;
 import examinator.entity.Answer;
 import examinator.entity.Evaluation;
 import examinator.entity.Exam;
 import examinator.entity.Question;
 import examinator.entity.Student;
-import examinator.test.TestInsert;
+import examinator.service.ExamService;
+import examinator.service.StudentService;
 
 @Controller
 public class ExamController {
-	ExamDao examDao = new ExamDao();
-	QuestionDao questionDao = new QuestionDao();
-	EvaluationDao evaluationDao = new EvaluationDao();
-	AnswerDao answerDao = new AnswerDao();
-	StudentDao studentDao = new StudentDao();
-
+	@Autowired
+	StudentService studentService;
+	
+	@Autowired
+	ExamService examService;
+	
 	@GetMapping("/")
 	public String hello(ModelMap model) {
-		//in case the database is empty add a test student
-		List<Student> listStudents = studentDao.findAll();
-		if(listStudents.isEmpty()) {
-			TestInsert.createStudent();
-		}
+		studentService.creatIfDoesntExist();
 		return "welcome";
 	}
 	
 	@PostMapping("/login")
 	public String login(HttpServletRequest request, ModelMap model,
 			@ModelAttribute("username") String username, @ModelAttribute("username") String password) {
-		Student student = studentDao.findByUsernameAndPassword(username, password);
+		Student student = studentService.getStudent(username, password);
 		if(student == null) {
 			model.addAttribute("message", "Username or password is uncorrect.");
 			return "error";
@@ -58,14 +50,9 @@ public class ExamController {
 	
 	@GetMapping("/list")
 	public String getList(ModelMap model) {
-		List<Exam> listExams = examDao.findAll();
-		//in case the database is empty, add a test exam
-		if(listExams.isEmpty()) {
-			listExams = new ArrayList<Exam>();
-			listExams.add(TestInsert.createOneExamWithfiveQuestions());
-		}
-		List<Evaluation> listEvaluations = evaluationDao.findAll();
+		List<Exam> listExams = examService.getListExams();
 		model.put("listExams", listExams);
+		List<Evaluation> listEvaluations = examService.getListEvaluations();
 		model.addAttribute("listEvaluations", listEvaluations);
 		return "list";
 	}
@@ -73,13 +60,13 @@ public class ExamController {
 	@GetMapping("/first/{id}")
 	public String getFirstQuestion(HttpServletRequest request, ModelMap model,
 			@PathVariable(value = "id") long exam_id) {
-		Question question = questionDao.findFirstQuestionByExamId(exam_id);
+		Question question = examService.getFirstQuestionByExamId(exam_id);
 		Student student = (Student) request.getSession().getAttribute("student");
 		if(student == null) {
 			model.addAttribute("message", "You have been disconnected!");
 			return "error";
 		}
-		Evaluation evaluation = evaluationDao.createNewEvaluation(student);
+		Evaluation evaluation = examService.createNewEvaluation(student);
 		request.getSession().setAttribute("evaluation", evaluation);
 		request.getSession().setAttribute("exam_id", exam_id);
 		model.addAttribute("question", question);
@@ -106,7 +93,7 @@ public class ExamController {
 			model.addAttribute("message", "You have been disconnected!");
 			return "error";
 		}
-		Answer answer = answerDao.save(choice_id, evaluation);
+		examService.save(choice_id, evaluation);
 
 		if(request.getSession().getAttribute("exam_id") == null) {
 			model.addAttribute("message", "You have been disconnected!");
@@ -114,9 +101,9 @@ public class ExamController {
 		}
 		long exam_id = (long) request.getSession().getAttribute("exam_id");
 
-		Question question = questionDao.findNextQuestionByCurrentExamIdAndQuestionId(exam_id, current_question_id);
+		Question question = examService.findNextQuestionByCurrentExamIdAndQuestionId(exam_id, current_question_id);
 		if (question == null) {
-			evaluationDao.finish(evaluation);
+			examService.finish(evaluation);
 		}
 		model.addAttribute("question", question);
 
@@ -125,7 +112,7 @@ public class ExamController {
 
 	@GetMapping("/evaluation/{evaluation_id}")
 	public String getEvaluation(HttpServletRequest request, ModelMap model, @PathVariable(value = "evaluation_id") long evaluation_id) {
-		Evaluation evaluation = evaluationDao.findByID(evaluation_id);
+		Evaluation evaluation = examService.findByID(evaluation_id);
 		request.getSession().setAttribute("evaluation", evaluation);
 		if (evaluation == null || evaluation.getAnswers().isEmpty()) {
 			String message = "This evalution does not exist.";
@@ -139,10 +126,9 @@ public class ExamController {
 		Question current_question = evaluation.getLastAnswer().getChoice().getQuestion();
 		long exam_id = current_question.getExam().getId();
 		long question_id = current_question.getId();
-		Question question = questionDao
-				.findNextQuestionByCurrentExamIdAndQuestionId(exam_id, question_id);
+		Question question = examService.findNextQuestionByCurrentExamIdAndQuestionId(exam_id, question_id);
 		if (question == null) {
-			evaluationDao.finish(evaluation);
+			examService.finish(evaluation);
 		}
 		model.addAttribute("question", question);
 		return "question";
@@ -154,7 +140,7 @@ public class ExamController {
 		entityManager.getTransaction().begin();
 
 		Evaluation evaluation = (Evaluation) request.getSession().getAttribute("evaluation");
-		List<Answer> answerList = answerDao.findByEvaluation(evaluation);
+		List<Answer> answerList = examService.findByEvaluation(evaluation);
 
 		model.put("answerList", answerList);
 
