@@ -65,6 +65,7 @@ public class AdminController {
 	public String saveExam(HttpServletRequest request, ModelMap model) {
 		Exam exam = (Exam) request.getSession().getAttribute("exam");
 		examService.save(exam);
+		request.getSession().removeAttribute("exam");
 		return "welcome";
 	}
 
